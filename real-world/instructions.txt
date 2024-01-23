@@ -1,0 +1,26 @@
+Hali!
+
+A yahoo-s címedre küldtem a valós mérési adatokat. Röviden, hogy mit tartalmaz a könyvtár:
+	- ./Data : ebben a 238x238x2000 tömbben vannak a felszíni mérések, t=2000 darab időbeli mintával rögzítve.
+	- ./RotatedData_filt_2000 : Ha Matlabban elforgatod az eredeti objektumot, akkor a hozzá tartozó elforgatott mérési adatokat ide menti a rotate_data.m script.
+	- experiment3.m : ez igazából meghív mindent egymás után, adatok betöltését, forgatását, szűrést, T_virt rekonstrukciót. 
+
+A JAP cikkből olvasd majd el az 5. fejezetet. Ebben látod, majd a 11. ábrán, hogy a valós mérések tartalmaznak vízszintes vonalakat, ami megint csak zaj. Ezt lehet kiszűrni a filter_on kapcsolóval.
+
+Elviekben annyit kell csak csinálnod, hogy meghívod az experiment3.m scriptet, ami legenerálja a képeket a neurális háló inputhoz.
+A hálókat lefuttatod ezekre a képekre, majd az U-Net kimenetére meghívod a groundtruth.m scriptet, ami 3D felületet illeszt az egymás mellé rakott a keresztmetszeti szeletekre.
+Az FKMIG-es képekre pl. így lehet meghívni:
+	- groundtruth('./Data/', [rotated_virtualwaves,'/FKMIG/'], 'fkmig_', params.theta, 238, 238, 48, 200);
+
+Egyelőre foglalkozz a vizsgákkal, az legyen az elsődleges. A valós méréseken csak akkor dolgozz majd, ha marad időd mellette.
+
+Üdv,
+Péter
+
+Lépések:
+	- experiment3.m legenerálja a hőképeket és virt. hullámokat mat fájlba a megfelelő theta fordulással
+	- test_loss_calc.py lefuttatja a FISTA-Net-et ezekre, és menti mat fájlba a tisztitott hullámokat
+	- mat_to_png.m a mat fájlokat png formátumban menti, és kiegésziti a méreteit az UNet-nek
+	- inference kiértékeli az UNet-et
+	- groundtruth('./Data/', 'C:\\Users\\galiger.gergo\\Desktop\\ThermUNet-master\\data\\hybrid\\models\\cmp\\80k\\more_shapes_fistanet\\2022-12-23_8-15-47.801755\\models\\best_model\\C\\Users\\galiger.gergo\\Desktop\\ThermUNet-master\\data\\realworld\\fistanet\\RotatedData_filt_2000\\Deg_0\\', 'virtualwave_', 0, 238, 238, 48, 200)
+
